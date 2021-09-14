@@ -28,7 +28,7 @@ int p2 = 0;
 int p3 = 0;
 int p4 = 0;
 bool triggered = false;
-
+sf::RenderWindow renderWindow(sf::VideoMode(WIDTH, HEIGHT), title); //set up screen
 int main() {
     sf::RectangleShape TL;
     sf::RectangleShape TR;
@@ -53,7 +53,6 @@ int main() {
     question.setCharacterSize(24);
 
     //game set up (you'll need these two lines in every game)
-    sf::RenderWindow renderWindow(sf::VideoMode(WIDTH, HEIGHT), title); //set up screen
     sf::Event event; //set up event queue
 
     //Here's how to load an image: clicke file->save as to see where to store "dog.png"
@@ -117,19 +116,29 @@ int main() {
         renderWindow.draw(TL);
         renderWindow.draw(TR);
         renderWindow.draw(BR);
-        renderWindow.draw(pic1); 
-        renderWindow.draw(pic2); 
-        renderWindow.draw(pic3); 
-        renderWindow.draw(pic4); 
+        if (questionNum != 0) {
+            renderWindow.draw(pic1);
+            renderWindow.draw(pic2);
+            renderWindow.draw(pic3);
+            renderWindow.draw(pic4);
+        }
         renderWindow.draw(question);
-        renderWindow.display(); 
-
+        if (questionNum == 6) {
+            question.setString("Done!, click for results.");
+            renderWindow.clear();
+            renderWindow.draw(question);
+        }
+        if (questionNum > 6) {
+            renderWindow.clear();
+            renderWindow.draw(question);
+        }
+        renderWindow.display();
     }//######################## end game loop ###################################################################################
 
 } //end game
 
 void quiz(int spot) {
-    if (questionNum < 5) {
+    if (questionNum <= 5) {
         switch (spot) {
         case 1:
             if (questionNum == 1) {
@@ -147,8 +156,6 @@ void quiz(int spot) {
             if (questionNum == 5) {
                 p2++;
             }
-            questionNum++;
-            question.setString("Question " + to_string(questionNum));
             break;
         case 2:
             if (questionNum == 1) {
@@ -166,8 +173,6 @@ void quiz(int spot) {
             if (questionNum == 5) {
                 p1++;
             }
-            questionNum++;
-            question.setString("Question " + to_string(questionNum));
             break;
         case 3:
             if (questionNum == 1) {
@@ -185,8 +190,6 @@ void quiz(int spot) {
             if (questionNum == 5) {
                 p3++;
             }
-            questionNum++;
-            question.setString("Question " + to_string(questionNum));
             break;
         case 4:
             if (questionNum == 1) {
@@ -204,12 +207,17 @@ void quiz(int spot) {
             if (questionNum == 5) {
                 p4++;
             }
-            questionNum++;
-            question.setString("Question " + to_string(questionNum));
             break;
         };
+        questionNum++;
+        question.setString("Question " + to_string(questionNum));
+        if (questionNum == 6) {
+            question.setString("Done!, click for results.");
+            renderWindow.clear();
+            renderWindow.draw(question);
+        }
     } else {
-        printf("%d, %d, %d, %d", p1, p2, p3, p4);
+        questionNum++;
         if (p1 >= p2 && p1 >= p3 && p1 >= p4)
             question.setString("You are p1");
         else if (p2 >= p1 && p2 >= p3 && p2 >= p4)
@@ -243,4 +251,9 @@ void quiz(int spot) {
         if (!img3.loadFromFile("dog.png")); //this line loads the image AND kills your program if it doesn't load
         if (!img4.loadFromFile("dog.png")); //this line loads the image AND kills your program if it doesn't load
     }
+    pic1.setTexture(img1);
+    pic2.setTexture(img2);
+    pic3.setTexture(img3);
+    pic4.setTexture(img4);
+    printf("%d, %d, %d, %d", p1, p2, p3, p4);
 }
